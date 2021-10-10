@@ -35,7 +35,7 @@ public class Odev {
     }
 
     @Test
-    public void test01()  {
+    public void test01() {
 
         driver.get("https://www.amazon.com/");
         driver.navigate().refresh();
