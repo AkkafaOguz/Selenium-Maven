@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 public class project01 {
 
-//Navigate to "https://react-shopping-cart-67954.firebaseapp.com/"
+// Navigate to "https://react-shopping-cart-67954.firebaseapp.com/"
 // List all the elements on the website
 // Create a String Arraylist and put Product Names into the ArrayList
 // Choose 5 items randomly, add to cart and print the names of items
@@ -34,7 +34,7 @@ public class project01 {
     static WebDriver driver;
 
     @BeforeClass
-    public static void setup(){
+    public static void setup() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
         driver.manage().window().maximize();
@@ -46,16 +46,17 @@ public class project01 {
     public void test() throws InterruptedException {
         List<WebElement> elements = driver.findElements(By.className("shelf-item__title"));
         ArrayList<String> elementsInList = new ArrayList<>();
-        elements.stream().forEach(t-> elementsInList.add(t.getText()));
+        elements.stream().forEach(t -> elementsInList.add(t.getText()));
 
-        List <String> randomlySelectedItems = new ArrayList<>();
+        List<String> randomlySelectedItems = new ArrayList<>();
 
-        while (randomlySelectedItems.size()!=5) {
-            int randomNumeber = (int) (Math.random()*(elementsInList.size()));
+        while (randomlySelectedItems.size() != 5) {
 
-            if (!randomlySelectedItems.contains(elementsInList.get(randomNumeber))){
-                randomlySelectedItems.add(elementsInList.get(randomNumeber));
-                String item = "//p[text()='" + randomlySelectedItems.get(randomlySelectedItems.size()-1) +"']";
+            int randomNumber = (int) (Math.random() * (elementsInList.size()));
+
+            if (!randomlySelectedItems.contains(elementsInList.get(randomNumber))) {
+                randomlySelectedItems.add(elementsInList.get(randomNumber));
+                String item = "//p[text()='" + randomlySelectedItems.get(randomlySelectedItems.size() - 1) + "']";
                 driver.findElement(By.xpath(item)).click();
                 Thread.sleep(250);
                 driver.findElement(By.xpath("//div[@class='float-cart__close-btn']")).click();
@@ -63,32 +64,36 @@ public class project01 {
         }
         Thread.sleep(250);
         driver.findElement(By.xpath("//span[@class='bag bag--float-cart-closed']")).click();
-        randomlySelectedItems.stream().forEach(t-> System.out.println("-> " + t));
+        randomlySelectedItems.stream().forEach(t -> System.out.println("-> " + t));
 
         double totalAmount = 0;
         ArrayList<Double> totalAmountList = new ArrayList<>();
 
-        for (int i = 1; i < (randomlySelectedItems.size()+1); i++) {
+        for (int i = 1; i < (randomlySelectedItems.size() + 1); i++) {
 
             Thread.sleep(250);
-            String elementAmount = "(//div[@class='shelf-item__price']/p)[" +i+"]";
+            String elementAmount = "(//div[@class='shelf-item__price']/p)[" + i + "]";
             String amount = driver.findElement(By.xpath(elementAmount)).getText();
-            amount = amount.replace("$ ","");
+            amount = amount.replace("$ ", "");
             double money = Double.parseDouble(amount);
             totalAmountList.add(money);
             totalAmount += money;
         }
 
-        String strDouble = String.valueOf(totalAmount);
-        strDouble= strDouble.substring(0,strDouble.indexOf(".")) + strDouble.substring(strDouble.indexOf("."), (strDouble.indexOf(".")+3));
+        DecimalFormat df = new DecimalFormat(".00");
+        String strDouble = df.format(totalAmount);
+        strDouble = strDouble.replace(",",".");
 
-        if ((driver.findElement(By.className("sub-price__val")).getText().replace("$ ","")).equals(strDouble)){
+
+        if ((driver.findElement(By.className("sub-price__val")).getText().replace("$ ", "")).equals(strDouble)) {
+
             System.out.println("Test for 'Total Amount' is passed!");
         } else {
             System.out.println("Test for 'Total Amount' is failed!");
         }
-        totalAmountList.stream().forEach(t-> System.out.println("$ " + t));
+        totalAmountList.stream().forEach(t -> System.out.println("$ " + t));
 
+        System.out.println("Total amount is: " + strDouble);
         driver.findElement(By.className("buy-btn")).click();
     }
 
